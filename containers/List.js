@@ -1,15 +1,33 @@
-define(['components/ListItem.js', 'db/listData.js', 'jquery'], function(
-  ListItem,
-  EventsData,
-  $
-) {
+define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
   var getData = function() {
     return JSON.parse(localStorage.events);
   };
 
-  var findEvent = function(id) {
+  var getEventFav = function(id) {
     var event = JSON.parse(localStorage.events)[id];
-    console.log(event);
+    return !event.fav;
+  };
+
+  var changeEventsArr = function(id) {
+    var events = JSON.parse(localStorage.events);
+    var updatedEvents = events.reduce(function(accum, el) {
+      if (el.id === +id) el.fav = !el.fav;
+      accum.push(el);
+      return accum;
+    }, []);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
+  };
+
+  var changeFavBtnStyle = function(btn, status) {
+    if (status) {
+      btn.classList.add('list__item-fav');
+      btn.classList.remove('list__item-unfav');
+      $(btn).text('В избранном');
+    } else {
+      btn.classList.add('list__item-unfav');
+      btn.classList.remove('list__item-fav');
+      $(btn).text('В избранное');
+    }
   };
 
   return {
@@ -20,38 +38,35 @@ define(['components/ListItem.js', 'db/listData.js', 'jquery'], function(
     checkState: function() {
       if (!localStorage.events) {
         var data = this.data;
-        data.push({ timestamp: new Date().getTime() });
         localStorage.setItem('events', JSON.stringify(data));
       }
     },
     changeFavState: function() {
-      // * изменение статуса "Избранное"
-      var className = this.classList[1];
-      var id = className.substr(-1, 1);
-      var event = findEvent(id);
-      // $(`.${className}`)
-      //   .css({
-      //     backgroundColor: '#ffffff',
-      //     color: '#555555',
-      //     'box-shadow': '0 0 2px #cccccc'
-      //   })
-      //   .text('Удалить из избранного');
-    },
-    renderListItems: function() {
-      var self = this;
-      this.data.forEach(function(item, id) {
-        if (item.timestamp) return;
-        var elem = new ListItem(item);
-        // console.log(elem);
-        self.wrapper.append(elem.create());
+      // * изменение статуса "Избранное" и стиля кнопки
+      var id = this.id.substr(-1, 1);
+      var fav = getEventFav(id);
 
-        $(`.list__item-fav${id}`).click(self.changeFavState);
+      changeFavBtnStyle(this, fav);
+      changeEventsArr(id);
+    },
+    cleanList: function() {
+      $(this.wrapper).empty();
+    },
+    renderListItems: function(data) {
+      var self = this;
+      this.cleanList();
+
+      data.forEach(function(item) {
+        var elem = new ListItem(item);
+        self.wrapper.append(elem.create());
       });
+
+      $('.list__item-btn').click(self.changeFavState);
     },
     init: function() {
       $('#root').append(this.wrapper);
       this.checkState();
-      this.renderListItems();
+      this.renderListItems(this.data);
     }
   };
 });

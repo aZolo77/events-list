@@ -22,6 +22,14 @@ define({
       description: 'Описание концерта Coldplay',
       price: 1500,
       type: 'concert',
+      fav: true
+    },
+    {
+      id: 3,
+      title: 'Концерт Madonna',
+      description: 'Описание концерта Madonna',
+      price: 5000,
+      type: 'concert',
       fav: false
     }
   ]

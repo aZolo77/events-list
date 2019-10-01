@@ -18,7 +18,11 @@ define(['jquery'], function($) {
         var ttl = `<div class="list__item-ttl">${this.title}</div>`;
         var desc = `<div class="list__item-desc">${this.description}</div>`;
         var elemPrice = `<span class="list__item-price">Стоимость: ${this.price} &#8381;</span>`;
-        var favButton = `<button id="fav-btn-${this.id}" class="list__item-fav list__item-fav${this.id}">В избранное</button>`;
+        var btnClass = this.fav
+          ? 'list__item-btn list__item-fav'
+          : 'list__item-btn list__item-unfav';
+        var btnText = this.fav ? 'В избранном' : 'В избранное';
+        var favButton = `<button id="fav-btn-${this.id}" class="${btnClass}">${btnText}</button>`;
         $(elem).html(ttl + desc + elemPrice + favButton);
         return elem;
       }
