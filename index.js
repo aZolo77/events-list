@@ -3,17 +3,13 @@ requirejs.config({
     jquery: 'libs/jquery.min',
     List: 'containers/List',
     ListItem: 'components/ListItem',
+    EventDesc: 'components/EventDescription',
     EventsData: 'db/listData',
     Filter: 'containers/Filter'
   }
 });
 
-requirejs(['List', 'ListItem', 'EventsData', 'Filter', 'jquery'], function(
-  List,
-  ListItem,
-  EventsData,
-  Filter
-) {
+requirejs(['List', 'Filter'], function(List, Filter) {
   Filter.init();
   List.init();
 });

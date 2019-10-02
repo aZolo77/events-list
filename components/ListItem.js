@@ -15,7 +15,15 @@ define(['jquery'], function($) {
           elem.classList.add('list__item_fav');
         }
 
-        var ttl = `<div class="list__item-ttl">${this.title}</div>`;
+        if (this.type === 'concert') {
+          elem.classList.add('concert');
+        }
+
+        if (this.type === 'exhibition') {
+          elem.classList.add('exhibition');
+        }
+
+        var ttl = `<div class="list__item-ttl">${this.title} <span id="eventInfo-${this.id}" class="event-info">i</span></div>`;
         var desc = `<div class="list__item-desc">${this.description}</div>`;
         var elemPrice = `<span class="list__item-price">Стоимость: ${this.price} &#8381;</span>`;
         var btnClass = this.fav

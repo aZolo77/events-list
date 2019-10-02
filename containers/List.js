@@ -1,4 +1,9 @@
-define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
+define(['ListItem', 'EventDesc', 'EventsData', 'jquery'], function(
+  ListItem,
+  EventDesc,
+  EventsData,
+  $
+) {
   var getData = function() {
     return JSON.parse(localStorage.events);
   };
@@ -32,7 +37,8 @@ define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
 
   return {
     wrapper: $('<div/>', {
-      class: 'list'
+      class: 'list',
+      id: 'listWrapper'
     }),
     data: localStorage.events ? getData() : EventsData.events,
     checkState: function() {
@@ -42,7 +48,6 @@ define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
       }
     },
     changeFavState: function() {
-      // * изменение статуса "Избранное" и стиля кнопки
       var id = this.id.substr(-1, 1);
       var fav = getEventFav(id);
 
@@ -52,9 +57,18 @@ define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
     cleanList: function() {
       $(this.wrapper).empty();
     },
+    renderDetailedEvent: function(elem) {
+      this.cleanList();
+      $('#listWrapper').html(elem);
+    },
     renderListItems: function(data) {
       var self = this;
       this.cleanList();
+
+      if (data.length === 0) {
+        $('#listWrapper').html('<p>Список пуст</p>');
+        return;
+      }
 
       data.forEach(function(item) {
         var elem = new ListItem(item);
@@ -62,6 +76,14 @@ define(['ListItem', 'EventsData', 'jquery'], function(ListItem, EventsData, $) {
       });
 
       $('.list__item-btn').click(self.changeFavState);
+
+      $('.event-info').click(function() {
+        // вывести подробную информацию о событии
+        var id = this.id.substr(-1, 1);
+        var event = getData()[id];
+        var EventItem = EventDesc.create(event);
+        self.renderDetailedEvent(EventItem);
+      });
     },
     init: function() {
       $('#root').append(this.wrapper);
